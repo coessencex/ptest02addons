@@ -1,0 +1,1201 @@
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //bool ca = true;
+            //bool cb = false;
+            bool cs = true;
+            bool csgo = false;
+            //PostfixEvaluator<String> z = new PostfixEvaluator<string>();
+            //Console.WriteLine("PostFix Evaluator");
+            //while (ca)
+            //{
+            //    Console.WriteLine("Input Postfix : ");
+            //    string linedfp1 = Console.ReadLine();
+            //    var a = z.EvaluatePostfixExpression(linedfp1);
+            //    Console.WriteLine(a);
+            //    cb = true;
+            //    while (cb)
+            //    {
+            //        Console.Write("Evaluate Postfix Again?(Y/N) : ");
+            //        string checker1 = Console.ReadLine();
+            //        if ((string.Equals(checker1, "n", StringComparison.OrdinalIgnoreCase)) ||
+            //            (string.Equals(checker1, "no", StringComparison.OrdinalIgnoreCase)))
+            //        {
+            //            ca = false;
+            //            cb = false;
+            //        }
+            //        if ((string.Equals(checker1, "y", StringComparison.OrdinalIgnoreCase)) ||
+            //            (string.Equals(checker1, "yes", StringComparison.OrdinalIgnoreCase)))
+            //        {
+            //            ca = true;
+            //            cb = false;
+            //        }
+            //    }
+
+            //}////final
+            InfixToPostfixConverter<String> G = new InfixToPostfixConverter<string>();
+            PostfixEvaluator<String> qwe = new PostfixEvaluator<string>();
+            Console.WriteLine("Infix to Postfix to Evaluate");
+
+            while (cs)
+            {
+                Console.WriteLine("\n*Predetermined Postfix expression*");
+                Console.WriteLine("[Press a] : (6+2) * 5 - 8 /4");
+                Console.WriteLine("[Press b] : (641+2)*53-8/497 ");
+                Console.WriteLine("[Press c] : (61,094+2,539,602.914)*5.051-0.518/41,186 ");
+                Console.WriteLine("[Press d] : Type your own Infix ");
+                string gg = Console.ReadLine();
+                if (gg == "a" || gg == "A" )
+                {
+                    var oi = G.ConvertToPostFix("(6+2) * 5 - 8 /4");
+                    Console.WriteLine("Postfix : ");
+                    Console.WriteLine(oi);
+                    Console.WriteLine("Evaluated Postfix : ");
+                    var jk = qwe.DopelGangerEvaluatePostfixExpression(oi);
+                    Console.WriteLine(jk);
+                    csgo = true;
+                }
+                if (gg == "b" || gg == "B")
+                {
+                    var oi = G.ConvertToPostFix("(641+2)*53-8/497");
+                    Console.WriteLine("Postfix : ");
+                    Console.WriteLine(oi);
+                    Console.WriteLine("Evaluated Postfix : ");
+                    var jk = qwe.DopelGangerEvaluatePostfixExpression(oi);
+                    Console.WriteLine(jk);
+                    csgo = true;
+
+                }
+                if (gg == "c" || gg == "C")
+                {
+                    var oi = G.ConvertToPostFix("(61,094+2,539,602.914)*5.051-0.518/41,186");
+                    Console.WriteLine("Postfix : ");
+                    Console.WriteLine(oi);
+                    Console.WriteLine("Evaluated Postfix : ");
+                    var jk = qwe.DopelGangerEvaluatePostfixExpression(oi);
+                    Console.WriteLine(jk);
+                    csgo = true;
+
+                }
+                if (gg == "d" || gg == "D" )
+                {
+                    Console.WriteLine("Input Postfix : ");
+                    string linedfp1 = Console.ReadLine();
+                    var ty = G.ConvertToPostFix(linedfp1);
+                Console.WriteLine("Postfix : ");
+                Console.WriteLine(ty);
+                Console.WriteLine("Evaluated Postfix : ");
+                var b = qwe.DopelGangerEvaluatePostfixExpression(ty);
+                Console.WriteLine(b);
+                csgo = true;
+
+                }
+                else { 
+                while (csgo)
+                {
+                    Console.Write("\nDo it Again?(Y/N) : ");
+                    string checker1 = Console.ReadLine();
+                    if ((string.Equals(checker1, "n", StringComparison.OrdinalIgnoreCase)) ||
+                        (string.Equals(checker1, "no", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        cs = false;
+                        csgo = false;
+                    }
+                    if ((string.Equals(checker1, "y", StringComparison.OrdinalIgnoreCase)) ||
+                        (string.Equals(checker1, "yes", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        cs = true;
+                        csgo = false;
+                    }
+                }
+                }
+            }
+
+            Console.ReadLine();
+
+        }
+        public class InfixToPostfixConverter<T> : StackArray<T>
+        {
+            public string ConvertToPostFix(string input)
+            {
+                string boy = "";
+                string girl = "";
+                StackArray<string> pfix = new StackArray<String>();
+                StackArray<char> stax = new StackArray<char>();
+                int i;
+                foreach (char VARIABLE in input)
+                {
+                    if (int.TryParse(VARIABLE.ToString(), out i))  //True if the first char is digit, false if not
+                    {
+                        pfix.Push(VARIABLE.ToString());
+                    }
+                    //okay
+                    if (VARIABLE == '.' || VARIABLE == ',')
+                    {
+                        pfix.Push(VARIABLE.ToString());
+                    }
+                    if (VARIABLE == '{')
+                    {
+                        stax.Push(VARIABLE);
+                    }
+                    if (VARIABLE == '[')
+                    {
+                        stax.Push(VARIABLE);
+                    }
+                    if (VARIABLE == '(')
+                    {
+                        stax.Push(VARIABLE);
+                    }
+                    if (IsOperator(VARIABLE)) //true if the char is a symbol
+                    {
+                        pfix.Push(" ");
+                        if (stax.IsEmpty() == false)     //true if the stack has something
+                        {
+
+                            var semene = stax.Peek();
+                            var tester = Precedence(semene, VARIABLE); //pop operators @ the top of the stack while they have equal or higher precedence
+                            if (tester == false)    //FALSE MEAN OP1> OP2, MEANING THE PEEK OF THE STACK HAS A HIGHER PRECEDENCE THAN THE CURRENT OPERATOR, VARIABLE
+                            {
+                                string holder = stax.Peek().ToString();
+                                stax.Pop();
+                                pfix.Push(holder.ToString());
+                                pfix.Push(" ");     //SPACE SOLUTIONS
+                                stax.Push(VARIABLE);
+                            }
+                            if (tester == true) //TRUE OP1 <OP2
+                            {
+                                stax.Push(VARIABLE);
+                            }
+                        }
+                        else //FALSE OP1= OP2
+                        {
+                            stax.Push(VARIABLE);
+                        }
+                    }
+                    if (VARIABLE == ')')
+                    {
+                        while (stax.Peek() != '(')
+                        {
+                            var holderagain = stax.Peek();
+                            pfix.Push(" ");  //SPACE SOLUTIONS
+                            pfix.Push(holderagain.ToString());
+                            stax.Pop();
+                        }
+                        stax.Pop();
+                    }
+                    if (VARIABLE == ']')
+                    {
+                        while (stax.Peek() != '[')
+                        {
+                            var holderagain = stax.Peek();
+                            pfix.Push(" ");  //SPACE SOLUTIONS
+                            pfix.Push(holderagain.ToString());
+                            stax.Pop();
+                        }
+                        stax.Pop();
+                    }
+                    if (VARIABLE == '}')
+                    {
+                        while (stax.Peek() != '{')
+                        {
+                            var holderagain = stax.Peek();
+                            pfix.Push(" ");  //SPACE SOLUTIONS
+                            pfix.Push(holderagain.ToString());
+                            stax.Pop();
+                        }
+                        stax.Pop();
+                    }
+                }
+                //pfix.Print();
+                //while (stax.IsEmpty() == false)
+                //{
+                //    var boi = stax.Peek();
+                //    Console.Write("" + boi);
+                //    stax.Pop();
+                //}
+                boy = pfix.strength();
+
+                while (stax.IsEmpty() == false)
+                {
+                    boy += " ";
+                    boy += stax.Peek();
+                    stax.Pop();
+                }
+                return boy;
+
+
+            }
+            public bool IsOperator(char inputchar)
+            {
+                if (inputchar == '^' || inputchar == '*' || inputchar == '/' || inputchar == '+' || inputchar == '-')
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            protected bool Precedence(char op1, char op2)
+            {
+                int iop1 = 0;
+                int iop2 = 0;
+                //P M D A s
+                //if (op1 == '(' || op1 == ')' || op1 == '[' || op1 == ']' || op1 == '{' || op1 == '}')
+                //{
+                //    iop1 = 6;
+
+                //}
+                //if (op2 == '(' || op2 == ')' || op2 == '[' || op2 == ']' || op2 == '{' || op2 == '}')
+                //{
+                //    iop2 = 6; 
+                //}ARE YOU OPERATOR PARENTHESIS
+                if (op1 == '^')
+                {
+                    iop1 = 5;
+                }
+                if (op2 == '^')
+                {
+                    iop2 = 5;
+                }
+
+                if (op1 == '*')
+                {
+                    iop1 = 4;
+                }
+                if (op2 == '*')
+                {
+                    iop2 = 4;
+                }
+                if (op1 == '/')
+                {
+                    iop1 = 3;
+                }
+                if (op2 == '/')
+                {
+                    iop2 = 3;
+                }
+                if (op1 == '+')
+                {
+                    iop1 = 2;
+                }
+                if (op2 == '+')
+                {
+                    iop2 = 2;
+                }
+                if (op1 == '-')
+                {
+                    iop1 = 1;
+                }
+                if (op2 == '-')
+                {
+                    iop2 = 1;
+                }
+
+                if (iop1 < iop2)  //op1 has lower precedence than op2
+                {
+                    return true;
+                }
+                if (iop1 > iop2)  //op1 has higher precedence than op2
+                {
+                    return false;
+                }
+                else
+                    return false;
+
+            }
+            public void PostfixSolverStack(string input)
+            {
+                int temp1, temp2, b;
+                string answer;
+                StackArray<String> z = new StackArray<String>();
+                for (int i = 0; i < input.Length; i++)
+                {
+                    string c = input.Substring(i, 1);
+                    if (c.Equals("*"))
+                    {
+                        string uno = (String)z.Pop();
+                        string dos = (String)z.Pop();
+                        temp1 = Convert.ToInt32(uno);
+                        temp2 = Convert.ToInt32(dos);
+                        b = temp1 * temp2;
+                        z.Push(b.ToString());
+                    }
+                    else if (c.Equals("/"))
+                    {
+                        string uno = (String)z.Pop();
+                        string dos = (String)z.Pop();
+                        temp1 = Convert.ToInt32(uno);
+                        temp2 = Convert.ToInt32(dos);
+                        b = temp1 / temp2;
+                        z.Push(b.ToString());
+                    }
+                    else if (c.Equals("-"))
+                    {
+                        string uno = (String)z.Pop();
+                        string dos = (String)z.Pop();
+                        temp1 = Convert.ToInt32(uno);
+                        temp2 = Convert.ToInt32(dos);
+                        b = temp1 - temp2;
+                        z.Push(b.ToString());
+                    }
+                    else if (c.Equals("+"))
+                    {
+                        string uno = (String)z.Pop();
+                        string dos = (String)z.Pop();
+                        temp1 = Convert.ToInt32(uno);
+                        temp2 = Convert.ToInt32(dos);
+                        b = temp1 + temp2;
+                        z.Push(b.ToString());
+                    }
+                    else
+                    {
+                        z.Push(input.Substring(i, 1));
+                    }
+                }
+                answer = (String)z.Pop();
+                Console.WriteLine(answer);
+            }
+        }
+        //public class PostfixToIntfixConverter<T> : QueueArray<T>  //HOMEMADE
+        //{
+        //    public void QueueToInt(string input)
+        //    {
+        //        QueueArray<int> numbers = new QueueArray<int>();
+        //        string[] checker = input.Split(' ');        //641 2 + 53 *
+        //        for (int i = 0; i < checker.Length; i++)
+        //        {
+        //            //if (int.TryParse(c.ToString(), out q))  //True if the first char is digit, false if not
+        //            //{
+        //            //    numbers.Enqueue(Int32.Parse(c.ToString()));
+        //            //}
+        //            if ("*/+-".Contains(checker[i]))
+        //            {
+        //                int temp1;
+        //                int temp2;
+        //                int b;
+        //                switch (checker[i])
+        //                {
+        //                    case ("*"):
+        //                        {
+        //                            temp1 = numbers.Dequeue();
+        //                            temp2 = numbers.Dequeue();
+        //                            b = temp1 * temp2;
+        //                            numbers.Enqueue(b);
+        //                            break;
+        //                        }
+        //                    case ("/"):
+        //                        {
+        //                            temp1 = numbers.Dequeue();
+        //                            temp2 = numbers.Dequeue();
+        //                            b = temp2 / temp1;
+        //                            numbers.Enqueue(b);
+        //                            break;
+        //                        }
+        //                    case ("+"):
+        //                        {
+        //                            temp1 = numbers.Dequeue();
+        //                            temp2 = numbers.Dequeue();
+        //                            b = temp1 + temp2;
+        //                            numbers.Enqueue(b);
+        //                            break;
+        //                        }
+        //                    case ("-"):
+        //                        {
+        //                            temp1 = numbers.Dequeue();
+        //                            temp2 = numbers.Dequeue();
+        //                            b = temp2 - temp1;
+        //                            numbers.Enqueue(b);     //last - first
+        //                            break;
+        //                        }
+        //                }
+        //            }
+
+        //            else
+        //            {
+        //                int x = Int32.Parse(checker[i].ToString());
+        //                numbers.Enqueue(x);
+        //            }
+
+        //        }
+        //        numbers.Print();
+        //    }
+        //}
+        public class PostfixEvaluator<T> : StackArray<T>
+        {
+            private int z;
+            //3:11pm double digit start
+            public double EvaluatePostfixExpression(string input)
+            {
+                StackArray<double> Stax = new StackArray<double>();
+                int sindex = 0;
+                string kwan = "";
+                double dresult = 0;
+                foreach (char c in input)
+                {
+                    if (int.TryParse(c.ToString(), out sindex)) //returns true if its a integer //SUBSTRING  //LASTINDEX OF ,
+                    {
+                        var a = int.Parse(c.ToString());
+                        Stax.Push(a);
+                    }
+                    if (c == '+' || c == '-' || c == '/' || c == '*' || c == '^' || c == '%')
+                    {
+                        var a = input.Substring(0,sindex);
+                        var nx = Stax.Pop();    //4
+                        var ny = Stax.Pop();    //8
+                        var b = Calculate(nx, ny, c);
+                        Stax.Push(b);
+                    }
+
+                }
+                //while (Staxer.IsEmpty() == false) <----- CHECKER FOR MY PUSH
+                //{
+                //    kwan += Staxer.Pop().ToString();
+                //}
+                return Stax.Pop();
+
+            }
+
+            public double DopelGangerEvaluatePostfixExpression(string input)
+            {
+                StackArray<double> Stax = new StackArray<double>();
+                double sindex = 0;
+                string kwan = "";
+                double dresult = 0;
+                string[] checker = input.Split(' ');        //641 2 + 53 *
+                for (int i = 0; i < checker.Length; i++)
+                { 
+                    if (double.TryParse(checker[i].ToString(), out sindex)) //returns true if its a integer //SUBSTRING  //LASTINDEX OF ,
+                    {
+                        var a = double.Parse(checker[i].ToString());
+                        Stax.Push(a);
+                    }
+                    if (checker[i] == "+" || checker[i] == "-" || checker[i] == "*" || checker[i] == "/" || checker[i] == "%" || checker[i] == "^")
+                    {
+                        var nx = Stax.Pop();    //4
+                        var ny = Stax.Pop();    //8
+                        var b = DopelGangerCalculate(nx, ny, checker[i]);
+                        Stax.Push(b);
+                    }
+                }
+            
+                //while (Staxer.IsEmpty() == false) <----- CHECKER FOR MY PUSH
+                //{
+                //    kwan += Staxer.Pop().ToString();
+                //}
+                return Stax.Pop();
+
+            }
+
+            public double Calculate(double op1, double op2, char ope)
+            {
+                double boy = 0;
+                if (ope == '+')
+                {
+                    boy = (op1 + op2);
+                }
+                if (ope == '-')
+                {
+                    boy = op2 - op1;
+                }
+                if (ope == '*')
+                {
+                    boy = op1 * op2;
+                }
+                if (ope == '/')
+                {
+                    boy = op2 / op1;
+                }
+                if (ope == '^')
+                {
+                    boy = Math.Pow(op2, op1);
+                }
+                if (ope == '%')
+                {
+                    boy = op2 % op1;
+                }
+                return boy;
+            }
+
+            public double DopelGangerCalculate(double op1, double op2, string ope)
+            {
+                double boy = 0;
+                if (ope == "+")
+                {
+                    boy = (op1 + op2);
+                }
+                if (ope == "-")
+                {
+                    boy = op2 - op1;
+                }
+                if (ope == "*")
+                {
+                    boy = op1 * op2;
+                }
+                if (ope == "/")
+                {
+                    boy = op2 / op1;
+                }
+                if (ope == "^")
+                {
+                    boy = Math.Pow(op2, op1);
+                }
+                if (ope == "%")
+                {
+                    boy = op2 % op1;
+                }
+                return boy;
+            }
+
+            private bool IsDigit(string ch)
+            {
+                //treats closing parenthesis as digit to make "+" an operator,
+                //if for example the input is ((6+2)*5 -8/4
+                //if (ch == ")")
+                //{return true; }
+                double parseResult;
+                return double.TryParse(ch, out parseResult);
+            }
+        }
+        public class StackArray<T> : IStack<T>      //LIFO
+        {
+            //property
+            public int Newsize { get; set; }
+            public string boy1 { get; set; }
+
+
+            //first thing to do, create the field(private);
+            private T[] Arey = new T[0];
+
+            public StackArray()
+            {
+                Newsize = 0;
+            }
+
+            public void Push(T item)
+            {
+                Newsize++;
+                //arrray are immutable, can't resize, ∴ bakwit
+                //Array.Resize(ref Arey, Newsize);
+                //Arey[Newsize - 1] = item;
+                Arey = new List<T>(Arey) { item }.ToArray();
+            }
+            public T Pop()
+            {
+                //problematic child
+                if (IsEmpty()) throw new InvalidOperationException("Stack is Empty");
+                else
+                {
+                    var tempint = Arey.Length;
+                    var element = Arey.Last();
+                    Array.Resize(ref Arey, tempint - 1);
+                    //Arey = Arey.Where(o => !Equals(o, Arey.Length)).ToArray();
+                    return element;
+                }
+            }
+            public void Clear()
+            {
+                Array.Clear(Arey, 0, Arey.Length);
+                Array.Resize(ref Arey, 0);
+                Newsize = 0;
+            }
+            public T Peek()
+            {
+                //L I F O
+                if (IsEmpty())
+                {
+                    throw new InvalidOperationException("Stack is Empty");
+                }
+                else
+                {
+                    var tmp = Arey.Length;
+                    return Arey[tmp - 1];
+                }
+            }
+            public bool IsEmpty()
+            {
+                //my array will not have negative indexer
+                if (Arey.Length > 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    var value = default(T);
+                    int pos = Array.IndexOf(Arey, value);
+                    if (pos > -1)
+                    {
+                        // meaning the array has a value, but is @ index 0
+                        return false;
+                    }
+                    return true;
+                }
+            }
+            public int Count => Arey.Length;    //**MAKE SURE THAT THE MAXIMUM INDEX ON AN ARRAY LIST IS LESS THAN THE LIST SIZE**
+
+            public void Print()
+            {
+                foreach (var VARIABLE in Arey)
+                {
+                    Console.Write("" + VARIABLE);
+                }
+            }
+
+            public string strength()
+            {
+                foreach (var c in Arey)
+                {
+                    boy1 += c.ToString();
+                }
+                return boy1;
+            }
+
+        }
+        public interface ILinkedList<T>
+        {
+            Node<T> Head { get; set; }
+            Node<T> Tail { get; set; }
+            int Count { get; set; }
+
+            void AddToHead(Node<T> node);
+            void AddToTail(Node<T> node);
+            T DeleteFromHead();
+            void DeleteFromTail();
+            bool DeleteFromPosition(int position);
+            bool Search(T Data);
+            void SwapHeadAndTail();
+            void MoveHeadToRight(int moves);
+            void MoveHeadToLeft(int moves);
+            void MoveTailToRight(int moves);
+            void MoveTailToLeft(int moves);
+            //void MoveTailToRight(int moves);
+            //void MoveTailToLeft(int moves);
+            bool Delete(T data);
+            void Print();
+
+
+        }
+        public interface IQueue<T>
+        {
+            T Peek();
+            void Enqueue(T item);
+            T Dequeue();
+            void Clear();
+            bool IsEmpty(); //I dont know to use shortcut =>
+            int Count { get; }
+            void Print();
+        }
+        public class QueueArray<T> : IQueue<T>
+        {
+            //property
+            public int Newsize { get; set; }
+
+            //first thing to do, create the field(private);
+            private T[] Arey = new T[0];
+
+            public QueueArray()
+            {
+                Newsize = 0;
+            }
+            public void Enqueue(T item)
+            {
+                Newsize++;
+                //for queue, first in should be pushed away
+                Arey = new List<T>(Arey) { item }.ToArray();
+
+            }
+            public T Dequeue()
+            {
+                //problematic child
+                if (IsEmpty()) throw new InvalidOperationException("Stack is Empty");
+                else
+                {
+                    //var tempint = Arey.Length;
+                    //var tempintz = Arey.First();
+                    ////var tempint2 = tempint - 1;
+                    //var element = tempintz;
+                    //Arey = Arey.Where(f => !Equals(f, element)).ToArray();
+                    ////Array.Resize(ref Arey, tempint - 1);
+                    //return element;
+                    //new found method for deleting first in first out
+                    var tempintz = Arey.First();
+                    Arey = Arey.Skip(1).ToArray();
+                    return tempintz;
+                }
+            }
+            public void Clear()
+            {
+                Array.Clear(Arey, 0, Arey.Length);
+                Array.Resize(ref Arey, 0);
+                Newsize = 0;
+            }
+            public T Peek()
+            {
+                //L I F O
+                if (IsEmpty())
+                {
+                    throw new InvalidOperationException("Stack is Empty");
+                }
+                else
+                {
+                    return Arey.First();
+                }
+            }
+
+            public bool IsEmpty()
+            {
+                //my array will not have negative indexer
+                if (Arey.Length > 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    var value = default(T);
+                    int pos = Array.IndexOf(Arey, value);
+                    if (pos > -1)
+                    {
+                        // meaning the array has a value, but is @ index 0
+                        return false;
+                    }
+                    return true;
+                }
+            }
+            public int Count => Arey.Length;
+
+            public void Print()
+            {
+
+                foreach (var item in Arey)
+                {
+                    if (item != null)
+                    {
+                        Console.Write("{0}", item.ToString());
+                    }
+                    else
+                    {
+                        Console.WriteLine("\t\t1 Element, null value");
+                    }
+
+                }
+            }
+
+        }
+
+        public class DoublyLinkedList<T> : ILinkedList<T>
+        {
+            public Node<T> Head { get; set; }
+            public Node<T> Tail { get; set; }
+            public int Count { get; set; }
+
+            public DoublyLinkedList()
+            {
+                this.Head = null;
+                this.Tail = null;
+                this.Count = 0;
+            }
+
+            public void AddToHead(Node<T> node)
+            {
+                if (Head != null)
+                {
+                    Head.Prev = node;
+                    node.Next = Head;
+                    Head = node;
+                    Count++;
+                }
+                else
+                {
+                    Head = node;
+                    Tail = Head;
+                    Count++;
+
+                }
+
+            }
+
+            public void AddToTail(Node<T> node)
+            {
+                if (Head != null)
+                {
+                    node.Prev = Tail;
+                    Tail.Next = node;
+                    Tail = node;
+                    Count++;
+                }
+                else
+                {
+                    Tail = node;
+                    Head = Tail;
+                    Count++;
+                }
+
+            }
+
+            public T DeleteFromHead()
+            {
+                //sir
+                var element = Head.Data;
+                if (Head == Tail)
+                {
+                    Head = Tail;
+                    Head = null;
+                    Tail = null;
+                    return element;
+                }
+                else
+                {
+                    Head = Head.Next;
+                    Head.Prev = null;
+                    return element;
+                }
+
+            }
+
+            public void DeleteFromTail()
+            {
+                Tail = Tail.Prev;
+                Tail.Next = null;
+            }
+
+            public bool Delete(T data)
+            {
+                var tmp = Head;
+                while (tmp != null)
+                {
+                    if (tmp.Data.Equals(data))
+                    {
+                        if (tmp == Head)
+                        {
+                            DeleteFromHead();
+                            Count--;
+                        }
+                        else if (tmp == Tail)
+                        {
+                            DeleteFromTail();
+                            Count--;
+                        }
+                        else
+                        {
+                            var newprev = tmp.Prev;
+                            var newnext = tmp.Next;
+                            newprev.Next = tmp.Next;
+                            newnext.Prev = tmp.Prev;
+                            Count--;
+                        }
+                        return true;
+                    }
+                    tmp = tmp.Next;
+                }
+                return false;
+            }
+
+            public bool DeleteFromPosition(int position)
+            {
+                var tmp = Head;
+                if (position > Count)
+                {
+                    return true;
+                }
+                if (position < 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    int tmpPos = position;
+                    int index = 0;
+                    while (index != tmpPos)
+                    {
+                        tmp = tmp.Next;
+                        index++;
+                    }
+                    DLGeneralDelete(tmp);
+                    return false;
+                }
+
+            }
+
+            public bool Search(T data) //D
+            {
+                var tmp = Head; //A
+                while (tmp != null)
+                {
+                    if (Equals(tmp.Data, data))
+                    {
+                        return true;
+                    }
+                    tmp = tmp.Next;
+                }
+                return false;
+            }
+
+            public void SwapHeadAndTail()
+            {
+                //SHALLOW
+                //var tempHead = Head.Data;
+                //Head.Data = Tail.Data;
+                //Tail.Data = tempHead;
+
+                //DEEP
+                var head = Head;
+                var tail = Tail;
+                //there
+                if (Head == Tail) return;
+                if (Count == 2)
+                {
+                    Head = tail;
+                    Tail = head;
+                    Head.Next = Tail;
+                    Tail.Prev = Head;
+                    return;
+                }
+
+
+                //set the Next of Tail to the node next to Head
+                Tail.Next = Head.Next;
+                //set the Prev of 2nd node from Head to Tail
+                Head.Next.Prev = Tail;
+
+                //set the Head to the Tail
+                Head = Tail;
+
+                // set the old Head's Next to null since it will become the Tail
+                head.Next = null;
+                //set the Next of the node before the old tail to old head
+                head.Prev = tail.Prev;
+                tail.Prev.Next = head;
+
+                //set Prev of Tail to null since it will become the Head
+                Tail.Prev = null;
+                Tail = head;
+            }
+
+            public void MoveHeadToRight(int moves)
+            {
+                if (moves > Count || moves < 0)
+                {
+                    throw new IndexOutOfRangeException("Move Count error");
+                }
+                var secondNode = Head.Next;
+                if (moves == Count)
+                {
+                    Tail.Next = Head;
+                    Head.Prev = Tail;
+                    Head.Next = null;
+
+                    Tail = Head;
+                    Head = secondNode;
+                    Head.Prev = null;
+                    return;
+                }
+
+                var head = Head;
+                int position = 0;
+                Head = head.Next; //oldhead.next = NEW HEAD
+                Head.Prev = null;
+                var toSwapNode = Head;
+                while (position != moves - 1) //6 nodes, can 5 moves          3 moves; 
+                {
+                    toSwapNode = toSwapNode.Next;
+                    position++;
+                } //2 = 2     E
+                head.Prev = null;
+                head.Next = null;
+                head.Next = toSwapNode.Next; //oldhead.next = 
+                toSwapNode.Next = head;
+            }
+
+            public void MoveHeadToLeft(int moves)
+            {
+                moves = moves * (-1);
+                if (moves > Count || moves < 0)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                var tmp = Head;
+                var tmp2 = Head;
+                int index = 0;
+                while (index != moves)
+                {
+                    tmp = tmp.Next;
+                    index++;
+                }
+                DLGeneralHeadSwap(tmp);
+            }
+
+            public void MoveTailToRight(int moves)
+            {
+                moves = (moves + 1 - Count);
+                if (moves > Count || moves < 0)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                var tmp = Head;
+                int index = 0;
+                while (index != moves)
+                {
+                    tmp = tmp.Next;
+                    index++;
+                }
+                DLGeneralTailSwap(tmp);
+
+            }
+
+            public void MoveTailToLeft(int moves)
+            {
+                if (moves > Count || moves < 0)
+                {
+                    throw new IndexOutOfRangeException("Move Count error");
+                }
+                var secondNode = Head.Next;
+                if (moves == Count)
+                {
+                    Tail.Next = Head;
+                    Head.Prev = Tail;
+                    Head.Next = null;
+
+                    Tail = Head;
+                    Head = secondNode;
+                    Head.Prev = null;
+                    return;
+                }
+
+                var tail = Tail;
+                int position = 0;
+                Tail = tail.Prev;
+                var toSwapNode = Tail;
+                while (position != moves - 1)
+                {
+                    toSwapNode = toSwapNode.Prev;
+                    position++;
+                }
+                Tail.Next = null; //IMPORTANT, NULL OR LOOP 
+                var container = toSwapNode.Prev;
+                tail.Prev = container; //oldhead.next = 
+                toSwapNode.Prev = tail;
+                container.Next = tail;
+                tail.Next = toSwapNode;
+            }
+            public void Print()
+            {
+                var temp = Head;
+                while (temp != null)
+                {
+                    Console.Write(" [" + temp.Data + "]");
+                    temp = temp.Next;
+                }
+                Console.WriteLine();
+            }
+
+            public void DLGeneralDelete(Node<T> node)
+            {
+                if (node == Head)
+                {
+                    DeleteFromHead();
+                    Count--;
+                }
+                else if (node == Tail)
+                {
+                    DeleteFromTail();
+                    Count--;
+                }
+                else
+                {
+                    var newprev = node.Prev;
+                    var newnext = node.Next;
+                    newprev.Next = node.Next;
+                    newnext.Prev = node.Prev;
+                    Count--;
+                }
+            }
+            public void DLGeneralHeadSwap(Node<T> node)
+            {
+                var tempHead = Head.Data;
+                Head.Data = node.Data;
+                node.Data = tempHead;
+            }
+
+            public void DLGeneralTailSwap(Node<T> node)
+            {
+                var tempTail = Tail.Data;
+                Tail.Data = node.Data;
+                node.Data = tempTail;
+            }
+        }
+
+        public class Node<T>
+        {
+            public T Data { get; set; }
+            public Node<T> Next { get; set; }
+            public Node<T> Prev { get; set; }
+            public Node()
+            {
+            }
+
+            public Node(T data)
+            {
+                Data = data;
+            }
+        }
+        public interface IStack<T>
+        {
+            T Peek();
+            T Pop();
+            void Push(T item);
+            void Clear();
+            bool IsEmpty(); //cant make it property because idk the shortcut =>
+            int Count { get; } //property
+            //exercise
+            void Print();
+        }
+        //july 13 2017
+        public class StackLinkedList<T> : IStack<T>
+        {
+            private ILinkedList<T> _lt = new DoublyLinkedList<T>();
+
+            public void Push(T item)
+            {
+                _lt.AddToHead(new Node<T>(item));
+            }
+            public void Clear()
+            {
+                _lt = new DoublyLinkedList<T>();
+            }
+
+            public T Peek()
+            {
+                if (IsEmpty()) throw new InvalidOperationException("Stack is Empty");
+                return _lt.Head.Data;
+            }
+            public void Print()
+            {
+                while (_lt.Head != null)
+                {
+                    Console.WriteLine(_lt.DeleteFromHead());
+                }
+            }
+            public bool IsEmpty()/* => _lt.Count == 0; //shortcut for*/
+            {
+                if (_lt.Count == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            public int Count => _lt.Count;
+            public T Pop()
+            {
+                if (IsEmpty()) throw new InvalidOperationException("Stack is Empty");
+                return _lt.DeleteFromHead();
+            }
+
+        }
+
+    }
